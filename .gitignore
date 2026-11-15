@@ -1,2 +1,10 @@
 # Local work records, never committed
 _devlog/
+
+/_devlog/
+__pycache__/
+*.pyc
+/widgets/
+.DS_Store
+.env
+.env.*

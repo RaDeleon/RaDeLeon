@@ -1,0 +1,94 @@
+name: Refresh profile widgets
+on:
+  schedule:
+    - cron: '23 7 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/profile-widgets.yml'
+      - 'scripts/**'
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: profile-widgets-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests
+      - run: python scripts/check_profile.py --source-only
+      - name: Generate public GitHub stats
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2
+        with:
+          card: stats
+          options: username=RaDeleon&show_icons=true&hide_rank=true&hide_border=true&bg_color=111427&title_color=F5B942&text_color=DDE4F4&icon_color=62D6D0&card_width=480
+          path: widgets/stats.svg
+          core_version: '2.2.0'
+          fail_on_error: 'true'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate public language card
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2
+        with:
+          card: top-langs
+          options: username=RaDeleon&layout=compact&langs_count=8&hide_border=true&bg_color=111427&title_color=F5B942&text_color=DDE4F4&card_width=400
+          path: widgets/languages.svg
+          core_version: '2.2.0'
+          fail_on_error: 'true'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Animate the public contribution calendar
+        uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b # v3
+        with:
+          github_user_name: RaDeleon
+          outputs: |
+            widgets/snake.svg?color_snake=%23D39A21
+            widgets/snake-dark.svg?palette=github-dark&color_snake=%23F5B942
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: python scripts/writing.py --fetch widgets/writing.json
+      - run: python scripts/check_profile.py --generated widgets
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: profile-widgets
+          path: widgets/
+          if-no-files-found: error
+          retention-days: 7
+  publish:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: generate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: profile-widgets
+          path: /tmp/profile-widgets
+      - name: Apply validated public widgets and article links
+        run: |
+          python3 scripts/check_profile.py --generated /tmp/profile-widgets
+          mkdir -p assets/generated
+          cp /tmp/profile-widgets/*.svg assets/generated/
+          python3 scripts/writing.py --apply /tmp/profile-widgets/writing.json
+          python3 scripts/check_profile.py
+      - name: Publish only generated profile updates
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/generated/*.svg README.md
+          if ! git diff --cached --quiet; then
+            git commit -m 'Refresh public profile widgets and writing'
+            git push origin HEAD:main
+          fi
