@@ -82,7 +82,7 @@ The projects below come from problems I run into myself: browser context that ge
 
 ### Also building for the web
 
-<a href="https://github.com/RaDeleon/SocialCanvas"><img src="assets/projects/socialcanvas.webp" width="100%" alt="SocialCanvas dashboard and Instagram widget layouts from the public project portfolio" /></a>
+<a href="https://github.com/RaDeleon/SocialCanvas"><img src="assets/projects/socialcanvas-banner.webp" width="100%" alt="SocialCanvas illustrated red panda arranging floating photo tiles and feed layouts" /></a>
 
 **[SocialCanvas](https://github.com/RaDeleon/SocialCanvas)** — an open-source Instagram widget platform with a dashboard and multiple display layouts. **TypeScript · React · Node.js.** [Read the case study ↗](https://angelodeleon.com/projects/socialcanvas/)
 
