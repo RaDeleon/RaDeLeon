@@ -133,9 +133,9 @@ I write about implementation decisions, measurement limits, and what I learned w
 <!-- writing:start -->
 - [Claude Pocket Checker: checking the model before sending the prompt](https://angelodeleon.com/writing/checking-the-model-before-sending-the-prompt/)
 - [Claude Browser Accountant: counting what the browser can actually see](https://angelodeleon.com/writing/counting-claude-without-inventing-the-bill/)
-- [BrowserRAD beyond the browser: one agent for the whole job](https://angelodeleon.com/writing/browserrad-beyond-the-browser/)
+- [BrowserAI DUO beyond the browser: one agent for the whole job](https://angelodeleon.com/writing/browserai-duo-beyond-the-browser/)
+- [Why I Built Overkill AI Check](https://angelodeleon.com/writing/why-i-built-overkill-ai-check/)
 - [Vibesomnia: keeping the AI night shift awake](https://angelodeleon.com/writing/keeping-the-ai-night-shift-awake/)
-- [AI browser automation with MCP: the BrowserHelm design](https://angelodeleon.com/writing/the-browser-as-an-agent-boundary/)
 <!-- writing:end -->
 
 [All writing](https://angelodeleon.com/writing/) · [RSS](https://angelodeleon.com/rss.xml)
